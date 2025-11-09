@@ -61,7 +61,7 @@ public class PipelineConfigurer
 
     public PipelineConfigurer WithStep(Type stepType)
     {
-        var @interfaces = stepType.GetInterfaces().Where(x => x.Name == "IPipelineStep`1" && x.Namespace == "Piper");
+        var @interfaces = stepType.GetInterfaces().Where(x => x.Name == "IPipelineStep`1" && x.Namespace == "Pipeline");
 
         foreach (var @interface in @interfaces)
         {
