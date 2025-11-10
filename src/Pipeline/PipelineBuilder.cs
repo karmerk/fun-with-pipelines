@@ -3,8 +3,13 @@
 namespace Pipeline;
 
 
+public interface IPipelineBuilder
+{
+    IPipeline<T> CreatePipeline<T>(IServiceProvider serviceProvider);
+}
 
-public class PipelineBuilder
+
+public class PipelineBuilder : IPipelineBuilder
 {
     private readonly OrderedDictionary<Type, List<Type>> _dictionary = new OrderedDictionary<Type, List<Type>>();
 
@@ -38,8 +43,15 @@ public class PipelineBuilder
         return this;
     }
 
+    public IPipeline<T> CreatePipeline<T>(IServiceProvider serviceProvider)
+    {
+        var steps = CreatePipelineSteps<T>(serviceProvider);
 
-    public IEnumerable<IPipelineStep<T>> CreateSteps<T>(IServiceProvider serviceProvider)
+        return new Pipeline<T>(steps);
+    }
+
+
+    public IEnumerable<IPipelineStep<T>> CreatePipelineSteps<T>(IServiceProvider serviceProvider)
     {
         var target = typeof(T);
 

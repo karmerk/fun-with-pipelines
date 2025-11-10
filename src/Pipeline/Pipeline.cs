@@ -23,7 +23,12 @@ public class Pipeline<T> : IPipeline<T>
 
     public Pipeline(PipelineBuilder builder, IServiceProvider serviceProvider)
     {
-        _steps = builder.CreateSteps<T>(serviceProvider).ToImmutableArray();
+        _steps = builder.CreatePipelineSteps<T>(serviceProvider).ToImmutableArray();
+    }
+
+    internal Pipeline(IEnumerable<IPipelineStep<T>> steps)
+    {
+        _steps = steps.ToImmutableArray();
     }
 
     public async Task RunAsync(T item, Func<T, CancellationToken, Task> handler, CancellationToken cancellationToken = default)

@@ -62,7 +62,6 @@ public static class Program
             configure.WithBeforeAction((int i, string b) => { });
         });
 
-
         var serviceProvider = services.BuildServiceProvider();
 
         using var scope = serviceProvider.CreateScope();
@@ -87,6 +86,19 @@ public static class Program
         await p2.RunAsync(42, HandleAsync);
 
 
+
+        // Use pipeline directly..
+        var builder = new PipelineBuilder();
+
+        builder.AddPipelineStep<BeforeAfter<string>>();
+
+        // TODO: should the be a way to not use service provider ?
+        var p3 = builder.CreatePipeline<string>(serviceProvider);
+
+        await p3.RunAsync("Bonjour", HandleAsync);
+
     }
+
+    
 
 }
