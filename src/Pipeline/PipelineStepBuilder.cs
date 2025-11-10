@@ -6,12 +6,38 @@ namespace Pipeline;
 
 public class PipelineStepBuilder
 {
-    private readonly OrderedDictionary<Type, List<Type>> _dictionary;
+    private readonly OrderedDictionary<Type, List<Type>> _dictionary = new OrderedDictionary<Type, List<Type>>();
 
-    public PipelineStepBuilder(OrderedDictionary<Type, List<Type>> dictionary)
+    public PipelineStepBuilder()
     {
-        _dictionary = dictionary;
     }
+
+    public PipelineStepBuilder AddPipelineStep<TStep>()
+    {
+        return AddPipelineStep(typeof(TStep));
+    }
+
+    public PipelineStepBuilder AddPipelineStep(Type stepType)
+    {
+        var @interfaces = stepType.GetInterfaces().Where(x => x.Name == "IPipelineStep`1" && x.Namespace == "Pipeline");
+
+        foreach (var @interface in @interfaces)
+        {
+            var target = @interface.GetGenericArguments().FirstOrDefault();
+            if (target is not null)
+            {
+                if (!_dictionary.TryGetValue(target, out var steps))
+                {
+                    _dictionary[target] = steps = new List<Type>();
+                }
+
+                steps.Add(stepType);
+            }
+        }
+
+        return this;
+    }
+
 
     public IEnumerable<IPipelineStep<T>> CreateSteps<T>(IServiceProvider serviceProvider)
     {

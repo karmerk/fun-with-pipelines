@@ -72,7 +72,7 @@ public static class Program
         var intPipeline = scope!.ServiceProvider.GetService<Pipeline<int>>();
 
 
-        var builder = scope.ServiceProvider.GetRequiredService<PipelineStepBuilder>();
+        //var builder = scope.ServiceProvider.GetRequiredService<PipelineStepBuilder>();
 
 
         var pipeline = scope.ServiceProvider.GetRequiredService<IPipeline<string>>();
