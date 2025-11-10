@@ -7,7 +7,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddPipeline(this IServiceCollection services, Action<PipelineConfigurer> configure)
     {
 
-        var builder = new PipelineStepBuilder();
+        var builder = new PipelineBuilder();
         var configurer = new PipelineConfigurer(builder);
 
         configure.Invoke(configurer);
@@ -44,9 +44,9 @@ public static class ServiceCollectionExtensions
 
 public class PipelineConfigurer
 {
-    private readonly PipelineStepBuilder _builder;
+    private readonly PipelineBuilder _builder;
 
-    public PipelineConfigurer(PipelineStepBuilder builder)
+    public PipelineConfigurer(PipelineBuilder builder)
     {
         _builder = builder;
     }

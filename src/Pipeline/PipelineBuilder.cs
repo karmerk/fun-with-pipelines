@@ -4,20 +4,20 @@ namespace Pipeline;
 
 
 
-public class PipelineStepBuilder
+public class PipelineBuilder
 {
     private readonly OrderedDictionary<Type, List<Type>> _dictionary = new OrderedDictionary<Type, List<Type>>();
 
-    public PipelineStepBuilder()
+    public PipelineBuilder()
     {
     }
 
-    public PipelineStepBuilder AddPipelineStep<TStep>()
+    public PipelineBuilder AddPipelineStep<TStep>()
     {
         return AddPipelineStep(typeof(TStep));
     }
 
-    public PipelineStepBuilder AddPipelineStep(Type stepType)
+    public PipelineBuilder AddPipelineStep(Type stepType)
     {
         var @interfaces = stepType.GetInterfaces().Where(x => x.Name == "IPipelineStep`1" && x.Namespace == "Pipeline");
 

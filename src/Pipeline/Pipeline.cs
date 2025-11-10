@@ -21,7 +21,7 @@ public class Pipeline<T> : IPipeline<T>
     private int _index;
     private CancellationToken _cancellationToken;
 
-    public Pipeline(PipelineStepBuilder builder, IServiceProvider serviceProvider)
+    public Pipeline(PipelineBuilder builder, IServiceProvider serviceProvider)
     {
         _steps = builder.CreateSteps<T>(serviceProvider).ToImmutableArray();
     }
