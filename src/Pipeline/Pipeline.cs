@@ -4,6 +4,7 @@ namespace Pipeline;
 
 public interface IPipeline<T>
 {
+    // TODO: look into converting to ValueTask
     Task RunAsync(T item, Func<T, CancellationToken, Task> handler, CancellationToken cancellationToken = default);
 
     Task<TResult> RunAsync<TResult>(T item, Func<T, CancellationToken, Task<TResult>> handler, CancellationToken cancellationToken = default);
