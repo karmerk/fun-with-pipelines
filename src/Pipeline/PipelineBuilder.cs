@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Immutable;
 
 namespace Pipeline;
 
@@ -45,7 +46,8 @@ public class PipelineBuilder : IPipelineBuilder
 
     public IPipeline<T> CreatePipeline<T>(IServiceProvider serviceProvider)
     {
-        var steps = CreatePipelineSteps<T>(serviceProvider);
+        var steps = CreatePipelineSteps<T>(serviceProvider)
+            .ToImmutableArray();
 
         return new Pipeline<T>(steps);
     }

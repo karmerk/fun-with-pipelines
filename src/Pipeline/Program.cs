@@ -43,7 +43,6 @@ public static class Program
     {
         await Task.Yield();
 
-
         Console.WriteLine(value);
     }
 
@@ -86,6 +85,12 @@ public static class Program
         await p2.RunAsync(42, HandleAsync);
 
 
+        await p2.RunAsync(1337, i => 
+        { 
+            Console.WriteLine($"Handler with no cancellation token: {i}");
+            return Task.CompletedTask;
+        });
+
 
         // Use pipeline directly..
         var builder = new PipelineBuilder();
@@ -98,6 +103,8 @@ public static class Program
         var result = await p3.RunAsync("Bonjour", HandleWithReturnAsync);
 
         Console.WriteLine(result);
+
+        
 
     }
 

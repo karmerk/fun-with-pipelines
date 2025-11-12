@@ -9,6 +9,16 @@ public interface IPipeline<T>
     Task<TResult> RunAsync<TResult>(T item, Func<T, CancellationToken, Task<TResult>> handler, CancellationToken cancellationToken = default);
 }
 
+public static class PipelineExtensions
+{
+    extension<T>(IPipeline<T> pipeline)
+    {
+        public Task RunAsync(T item, Func<T, Task> handler)
+        {
+            return pipeline.RunAsync(item, (T i, CancellationToken ct) => handler(item), CancellationToken.None);
+        }
+    }
+}
 
 public class Pipeline<T> : IPipeline<T>
 {
@@ -23,9 +33,9 @@ public class Pipeline<T> : IPipeline<T>
         _steps = builder.CreatePipelineSteps<T>(serviceProvider).ToImmutableArray();
     }
 
-    internal Pipeline(IEnumerable<IPipelineStep<T>> steps)
+    public Pipeline(params ImmutableArray<IPipelineStep<T>> steps)
     {
-        _steps = steps.ToImmutableArray();
+        _steps = steps;
     }
 
     public async Task RunAsync(T item, Func<T, CancellationToken, Task> handler, CancellationToken cancellationToken = default)
