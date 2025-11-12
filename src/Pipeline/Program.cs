@@ -95,10 +95,20 @@ public static class Program
         // TODO: should the be a way to not use service provider ?
         var p3 = builder.CreatePipeline<string>(serviceProvider);
 
-        await p3.RunAsync("Bonjour", HandleAsync);
+        var result = await p3.RunAsync("Bonjour", HandleWithReturnAsync);
+
+        Console.WriteLine(result);
 
     }
 
-    
+    public static async Task<int> HandleWithReturnAsync(string value, CancellationToken cancellationToken)
+    {
+        await Task.Yield();
+
+        Console.WriteLine(value);
+
+        return value.Length;
+    }
+
 
 }

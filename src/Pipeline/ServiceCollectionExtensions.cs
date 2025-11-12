@@ -13,27 +13,7 @@ public static class ServiceCollectionExtensions
         configure.Invoke(configurer);
 
         services.AddSingleton(builder);
-
         services.AddScoped(typeof(IPipeline<>), typeof(Pipeline<>));
-
-        // TODO now we have the steps.. we need to feed them into the service collection
-
-        //var @interface = typeof(IPipelineStep<object>).GetGenericTypeDefinition();
-
-        //foreach(var (target,steps) in dictionary)
-        //{
-        //    if (target.IsGenericTypeParameter is false)
-        //    {
-        //        var serviceType = @interface.MakeGenericType(target);
-
-        //        foreach (var implementationType in steps)
-        //        {
-        //            services.AddScoped(serviceType, implementationType);
-        //        }
-
-        //        services.AddScoped(typeof(Pipeline<object>).GetGenericTypeDefinition().MakeGenericType(target));
-        //    }
-        //}
 
         return services;
     }

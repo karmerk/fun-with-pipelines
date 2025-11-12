@@ -6,10 +6,7 @@ public interface IPipeline<T>
 {
     Task RunAsync(T item, Func<T, CancellationToken, Task> handler, CancellationToken cancellationToken = default);
 
-    // TODO: I would like to support results also - We need a return chain that supports a result
-    // Yet im not entirely sure if i want the pipeline steps to have access to the result. Im like caught in the mindset that
-    // pipeline steps should not modify the response, yet it seems like a obivuals use case. 
-    //Task<TResult> RunAsync<TResult>(T item, Func<T, CancellationToken, Task<TResult>> handler, CancellationToken cancellationToken = default);
+    Task<TResult> RunAsync<TResult>(T item, Func<T, CancellationToken, Task<TResult>> handler, CancellationToken cancellationToken = default);
 }
 
 
@@ -42,6 +39,27 @@ public class Pipeline<T> : IPipeline<T>
         _index = -1;
 
         await NextAsync();
+    }
+
+    public async Task<TResult> RunAsync<TResult>(T item, Func<T, CancellationToken, Task<TResult>> handler, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+        ArgumentNullException.ThrowIfNull(handler);
+
+        TResult? result = default;
+
+        _item = item;
+        // Wrap the handler in an new handler that grabs the result
+        _handler = async (T i, CancellationToken ct) =>
+        {
+            result = await handler.Invoke(i, ct);
+        };
+        _cancellationToken = cancellationToken;
+        _index = -1;
+
+        await NextAsync();
+
+        return result!;
     }
 
     private async Task NextAsync()
