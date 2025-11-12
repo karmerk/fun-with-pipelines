@@ -91,6 +91,12 @@ public static class Program
             return Task.CompletedTask;
         });
 
+        await p2.RunAsync(1337, i =>
+        {
+            // The pipeline is still async
+            Console.WriteLine($"Non async handler with no cancellation token: {i}");
+        });
+
 
         // Use pipeline directly..
         var builder = new PipelineBuilder();

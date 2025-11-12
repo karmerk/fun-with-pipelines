@@ -15,7 +15,17 @@ public static class PipelineExtensions
     {
         public Task RunAsync(T item, Func<T, Task> handler)
         {
-            return pipeline.RunAsync(item, (T i, CancellationToken ct) => handler(item), CancellationToken.None);
+            return pipeline.RunAsync(item, (T i, CancellationToken _) => handler(item), CancellationToken.None);
+        }
+
+        public Task RunAsync(T item, Action<T> handler)
+        {
+            return pipeline.RunAsync(item, (T i, CancellationToken _) =>
+            {
+                handler(item);
+
+                return Task.CompletedTask;
+            }, CancellationToken.None);
         }
     }
 }
