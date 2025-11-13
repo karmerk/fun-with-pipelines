@@ -64,21 +64,12 @@ public class Pipeline<T> : IPipeline<T>
 
     public async Task<TResult> RunAsync<TResult>(T item, Func<T, CancellationToken, Task<TResult>> handler, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(item);
-        ArgumentNullException.ThrowIfNull(handler);
-
         TResult? result = default;
 
-        _item = item;
-        // Wrap the handler in an new handler that grabs the result
-        _handler = async (T i, CancellationToken ct) =>
+        await RunAsync(item, async (T i, CancellationToken ct) =>
         {
             result = await handler.Invoke(i, ct);
-        };
-        _cancellationToken = cancellationToken;
-        _index = -1;
-
-        await NextAsync();
+        }, cancellationToken);
 
         return result!;
     }
