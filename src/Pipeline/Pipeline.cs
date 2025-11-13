@@ -2,11 +2,20 @@
 
 namespace Pipeline;
 
+/// <summary>
+/// Pipeline to handle <c>T</c>
+/// </summary>
 public interface IPipeline<T>
 {
     // TODO: look into converting to ValueTask
+    /// <summary>
+    /// Run pipeline with <c>T</c> item against a handler
+    /// </summary>
     Task RunAsync(T item, Func<T, CancellationToken, Task> handler, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Run pipeline with <c>T</c> item against a handler that returns a <c>TResult</c> result
+    /// </summary>
     Task<TResult> RunAsync<TResult>(T item, Func<T, CancellationToken, Task<TResult>> handler, CancellationToken cancellationToken = default);
 }
 
@@ -71,15 +80,18 @@ public class Pipeline<T> : IPipeline<T>
             result = await handler.Invoke(i, ct);
         }, cancellationToken);
 
-        return result!;
+#pragma warning disable CS8603 // Possible null reference return.
+        // I guess it could be null if the handler returns null ¯\_(ツ)_/¯
+        return result;
+#pragma warning restore CS8603 // Possible null reference return.
     }
 
     private async Task NextAsync()
     {
         _index++;
 
-        var count = _steps.Length;
-        if (_index < count)
+        // Call next step
+        if (_index < _steps.Length)
         {
             var step = _steps[_index];
 
@@ -94,4 +106,6 @@ public class Pipeline<T> : IPipeline<T>
             await _handler.Invoke(_item, _cancellationToken);
         }
     }
+
+
 }
